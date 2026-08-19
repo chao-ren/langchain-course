@@ -1,7 +1,8 @@
+import os
+
 from dotenv import load_dotenv
 from langchain_core.prompts import PromptTemplate
-from langchain_openai import ChatOpenAI
-from langchain_ollama import ChatOllama
+from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 
 load_dotenv()
 
@@ -29,9 +30,16 @@ Musk's political activities, views, and statements have made him a polarizing fi
     summary_prompt_template = PromptTemplate(
         input_variables=["information"], template=summary_template
     )
+    
+    model_id = os.getenv("HF_MODEL", "Qwen/Qwen2.5-7B-Instruct")
 
-    llm = ChatOllama(temperature=0, model="gemma3:270m")
-    # llm = ChatOpenAI(temperature=0.9, model="gpt-5")
+    endpoint = HuggingFaceEndpoint(
+        repo_id=model_id,
+        task="text-generation",
+        max_new_tokens=256,
+        temperature=0,
+    ) # pyright: ignore[reportCallIssue]
+    llm = ChatHuggingFace(llm=endpoint)
     chain = summary_prompt_template | llm
 
     response = chain.invoke(input={"information": information})
