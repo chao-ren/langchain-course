@@ -6,7 +6,6 @@ from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 
 load_dotenv()
 
-
 def main():
     print("Hello from langchain-course!")
     information = """
